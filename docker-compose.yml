@@ -1,0 +1,98 @@
+# Friends Golf League — Docker Compose Stack
+# Phase 1 deliverable. Brings up PocketBase, Caddy, frontend placeholder, and backup.
+#
+# Usage:
+#   1. Copy .env.example to .env and fill in the values
+#   2. docker compose up -d
+#   3. Browse to https://${DOMAIN}/_/  → PocketBase admin login
+
+services:
+
+  # -------------------------------------------------------------------
+  # Caddy — reverse proxy, automatic HTTPS via Let's Encrypt
+  # -------------------------------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    container_name: golf-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"     # required for Let's Encrypt HTTP challenge
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
+      - ADMIN_BASIC_AUTH=${ADMIN_BASIC_AUTH}
+    depends_on:
+      - pocketbase
+      - frontend
+    networks:
+      - golf-net
+
+  # -------------------------------------------------------------------
+  # PocketBase — backend, database, auth, file storage, admin UI
+  # -------------------------------------------------------------------
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:latest
+    container_name: golf-pocketbase
+    restart: unless-stopped
+    volumes:
+      - ./pocketbase/pb_data:/pb_data
+      - ./pocketbase/pb_migrations:/pb_migrations
+      - ./pocketbase/pb_hooks:/pb_hooks
+    healthcheck:
+      test: wget --spider --quiet http://127.0.0.1:8090/api/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - golf-net
+
+  # -------------------------------------------------------------------
+  # Frontend — static placeholder for Phase 1, real app from Phase 2
+  # -------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+    container_name: golf-frontend
+    restart: unless-stopped
+    networks:
+      - golf-net
+
+  # -------------------------------------------------------------------
+  # Backup — daily SQLite snapshot + uploads tar
+  # -------------------------------------------------------------------
+  backup:
+    image: alpine:3.19
+    container_name: golf-backup
+    restart: unless-stopped
+    volumes:
+      - ./pocketbase/pb_data:/source:ro
+      - ./backups:/backups
+      - ./scripts/backup.sh:/usr/local/bin/backup.sh:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        apk add --no-cache sqlite tar coreutils tzdata
+        # run backup daily at 03:00 server time
+        echo "0 3 * * * /usr/local/bin/backup.sh" > /etc/crontabs/root
+        crond -f -l 2
+    networks:
+      - golf-net
+
+# -------------------------------------------------------------------
+# Volumes — Caddy needs to persist its cert data
+# -------------------------------------------------------------------
+volumes:
+  caddy_data:
+  caddy_config:
+
+# -------------------------------------------------------------------
+# Network — single private network for all services
+# -------------------------------------------------------------------
+networks:
+  golf-net:
+    driver: bridge

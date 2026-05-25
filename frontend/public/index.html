@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f4d2e">
+    <title>Friends Golf League</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #1f4d2e 0%, #2d6a3f 50%, #143820 100%);
+            color: #f8f9fa;
+            -webkit-font-smoothing: antialiased;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            max-width: 36rem;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        .status {
+            display: grid;
+            gap: 0.75rem;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .dot {
+            width: 0.6rem;
+            height: 0.6rem;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .dot.ok { background: #4ade80; }
+        .dot.pending { background: #facc15; }
+        .footer {
+            font-size: 0.8125rem;
+            opacity: 0.6;
+        }
+        .links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .links a {
+            color: #f8f9fa;
+            opacity: 0.7;
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+            padding-bottom: 2px;
+        }
+        .links a:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="badge">Phase 1 — Foundation</div>
+        <h1>Friends Golf League</h1>
+        <p class="subtitle">Self-hosted match play league. Coming soon.</p>
+
+        <div class="status">
+            <div class="status-row">
+                <span><span class="dot ok"></span>HTTPS / Caddy reverse proxy</span>
+                <span>Running</span>
+            </div>
+            <div class="status-row" id="pb-status">
+                <span><span class="dot pending"></span>PocketBase API</span>
+                <span>Checking…</span>
+            </div>
+            <div class="status-row">
+                <span><span class="dot pending"></span>Phase 2 — Read-only league</span>
+                <span>Pending</span>
+            </div>
+            <div class="status-row">
+                <span><span class="dot pending"></span>Phase 3 — Player submission</span>
+                <span>Pending</span>
+            </div>
+        </div>
+
+        <p class="footer">If you're seeing this, the stack is alive and routing correctly.</p>
+
+        <div class="links">
+            <a href="/_/">Admin panel</a>
+            <a href="/api/health">API health</a>
+        </div>
+    </div>
+
+    <script>
+        // Phase 1 smoke test: confirm the API is reachable
+        fetch('/api/health')
+            .then(r => r.json())
+            .then(data => {
+                const row = document.getElementById('pb-status');
+                if (data.code === 200) {
+                    row.innerHTML = '<span><span class="dot ok"></span>PocketBase API</span><span>Healthy</span>';
+                } else {
+                    row.innerHTML = '<span><span class="dot pending"></span>PocketBase API</span><span>Unexpected response</span>';
+                }
+            })
+            .catch(err => {
+                const row = document.getElementById('pb-status');
+                row.innerHTML = '<span><span class="dot pending"></span>PocketBase API</span><span>Not reachable</span>';
+            });
+    </script>
+</body>
+</html>

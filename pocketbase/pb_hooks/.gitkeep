@@ -1,0 +1,7 @@
+# Reserved for Phase 4 work.
+# This directory will contain PocketBase JS hooks for the rules engine:
+#   - on match confirmation: calculate match_points and bonuses
+#   - on match confirmation: apply heavy-margin handicap cuts
+#   - on schedule (Sunday 22:00): apply form-streak cuts with fortnight cap
+#   - on schedule (every hour): auto-confirm matches > 7 days old
+#   - on schedule (Week 6, 9, 12 of active seasons): nudges and inactivity flags

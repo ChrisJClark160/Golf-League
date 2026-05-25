@@ -1,0 +1,65 @@
+# Caddy reverse proxy configuration
+# Handles HTTPS via Let's Encrypt, routes to PocketBase API, frontend, and admin
+
+{$DOMAIN} {
+
+    # ---------------------------------------------------------------
+    # PocketBase admin UI — extra basic-auth on top of PocketBase auth
+    # Two passwords needed: Caddy basic-auth, then PocketBase admin
+    # ---------------------------------------------------------------
+    handle_path /_/* {
+        basicauth {
+            chris {$ADMIN_BASIC_AUTH}
+        }
+        rewrite * /_{path}
+        reverse_proxy pocketbase:8090
+    }
+
+    # ---------------------------------------------------------------
+    # PocketBase REST API — used by the frontend to fetch data
+    # ---------------------------------------------------------------
+    handle /api/* {
+        reverse_proxy pocketbase:8090
+    }
+
+    # ---------------------------------------------------------------
+    # File downloads (scorecard photos) served via signed URLs
+    # ---------------------------------------------------------------
+    handle /files/* {
+        reverse_proxy pocketbase:8090
+    }
+
+    # ---------------------------------------------------------------
+    # Everything else → the frontend
+    # ---------------------------------------------------------------
+    handle {
+        reverse_proxy frontend:80
+    }
+
+    # ---------------------------------------------------------------
+    # Logging — useful for debugging
+    # ---------------------------------------------------------------
+    log {
+        output stdout
+        format console
+    }
+
+    # ---------------------------------------------------------------
+    # Encoding — gzip and zstd for faster responses
+    # ---------------------------------------------------------------
+    encode zstd gzip
+
+    # ---------------------------------------------------------------
+    # Sensible security headers
+    # ---------------------------------------------------------------
+    header {
+        # Don't allow framing (clickjacking protection)
+        X-Frame-Options "SAMEORIGIN"
+        # Disable content-type sniffing
+        X-Content-Type-Options "nosniff"
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # HSTS once we're confident things work — uncomment after first successful run
+        # Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+}
