@@ -1,6 +1,6 @@
 function app() {
     return {
-        page: 'login',
+        page: 'rules',
         tab: 'standings',
         loading: false,
         error: '',
@@ -113,7 +113,7 @@ function app() {
             localStorage.removeItem('pb_user');
             this.token = null;
             this.user = null;
-            this.page = 'login';
+            this.page = 'rules';
             this.credentials = { email: '', password: '' };
             this.error = '';
         }

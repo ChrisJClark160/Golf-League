@@ -8,6 +8,129 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body x-data="app()" x-init="init()">
+    <!-- Rules Page -->
+    <template x-if="page === 'rules'">
+        <div class="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-950">
+            <nav class="bg-black bg-opacity-20 border-b border-white border-opacity-10 sticky top-0 z-40">
+                <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-white">Golf League</h1>
+                    <button @click="page = 'login'" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition">Sign In</button>
+                </div>
+            </nav>
+
+            <main class="max-w-4xl mx-auto px-6 py-12">
+                <div class="space-y-8">
+                    <!-- Hero -->
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold text-white mb-4">Match Play Golf League</h2>
+                        <p class="text-xl text-green-100">Self-hosted league for mates. 12 weeks. Best player wins.</p>
+                    </div>
+
+                    <!-- Quick Facts -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white bg-opacity-10 rounded-lg p-4 text-center border border-white border-opacity-20">
+                            <div class="text-3xl font-bold text-green-400">12</div>
+                            <div class="text-sm text-gray-300">Week Season</div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 rounded-lg p-4 text-center border border-white border-opacity-20">
+                            <div class="text-3xl font-bold text-green-400">2</div>
+                            <div class="text-sm text-gray-300">Matches/Month</div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 rounded-lg p-4 text-center border border-white border-opacity-20">
+                            <div class="text-3xl font-bold text-green-400">3</div>
+                            <div class="text-sm text-gray-300">Points/Win</div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 rounded-lg p-4 text-center border border-white border-opacity-20">
+                            <div class="text-3xl font-bold text-green-400">7</div>
+                            <div class="text-sm text-gray-300">Awards</div>
+                        </div>
+                    </div>
+
+                    <!-- How to Play -->
+                    <section class="bg-white bg-opacity-10 rounded-lg p-8 border border-white border-opacity-20">
+                        <h3 class="text-2xl font-bold text-white mb-4">How to Play</h3>
+                        <div class="space-y-4 text-gray-100">
+                            <p><strong>Format:</strong> Singles handicap match play (18 holes)</p>
+                            <p><strong>Scoring:</strong> Win = 3 points, Draw = 1 point, Loss = 0 points</p>
+                            <p><strong>9-hole matches:</strong> Win = 2 points, Draw = 1 point, Loss = 0 points</p>
+                            <p><strong>Qualifying:</strong> Min 3 matches with at least 3 different opponents</p>
+                            <p><strong>Match limit:</strong> Max 2 counting matches vs same opponent (extras are friendly only)</p>
+                        </div>
+                    </section>
+
+                    <!-- Scoring & Bonuses -->
+                    <section class="bg-white bg-opacity-10 rounded-lg p-8 border border-white border-opacity-20">
+                        <h3 class="text-2xl font-bold text-white mb-4">Bonuses</h3>
+                        <div class="space-y-3 text-gray-100">
+                            <p><strong>+1 New Opponent:</strong> Beat a new opponent you haven't played (season)</p>
+                            <p><strong>+1 Close Rematch:</strong> Play again someone you beat 2&1 or closer (from week 6)</p>
+                        </div>
+                    </section>
+
+                    <!-- Handicaps -->
+                    <section class="bg-white bg-opacity-10 rounded-lg p-8 border border-white border-opacity-20">
+                        <h3 class="text-2xl font-bold text-white mb-4">Handicap Adjustments</h3>
+                        <div class="space-y-3 text-gray-100">
+                            <p><strong>Automatic cut:</strong> -1 for heavy wins (5&4 or better)</p>
+                            <p><strong>Weekly review:</strong> 3 straight wins = -1 | 3 straight losses = +1</p>
+                            <p><strong>Limit:</strong> Max 1 cut per fortnight per player</p>
+                            <p><strong>Range:</strong> 4 to 42</p>
+                        </div>
+                    </section>
+
+                    <!-- Awards -->
+                    <section class="bg-white bg-opacity-10 rounded-lg p-8 border border-white border-opacity-20">
+                        <h3 class="text-2xl font-bold text-white mb-4">Awards</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-100">
+                            <div>
+                                <p class="font-semibold text-green-400">League Champion</p>
+                                <p class="text-sm">Most points overall</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-green-400">Tour Champion</p>
+                                <p class="text-sm">Best points-per-match (min 4 matches)</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-green-400">Most Improved</p>
+                                <p class="text-sm">Best handicap reduction (excl. top 2)</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-green-400">Most Social</p>
+                                <p class="text-sm">Most matches played</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-green-400">Most Active</p>
+                                <p class="text-sm">Consistent participation</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-green-400">Underdog</p>
+                                <p class="text-sm">Biggest upset (lowest vs highest handicap)</p>
+                            </div>
+                            <div class="md:col-span-2">
+                                <p class="font-semibold text-amber-400">Wooden Spoon</p>
+                                <p class="text-sm">Fewest points (participation prize, not shame)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Group Play -->
+                    <section class="bg-white bg-opacity-10 rounded-lg p-8 border border-white border-opacity-20">
+                        <h3 class="text-2xl font-bold text-white mb-4">Group Rounds (3-Ball / 4-Ball)</h3>
+                        <p class="text-gray-100 mb-4">Play multiple matches in one round. Declare pairings before tee-off.</p>
+                        <p class="text-gray-100"><strong>3-ball:</strong> Up to 3 matches | <strong>4-ball:</strong> Typically 2 matches</p>
+                    </section>
+
+                    <!-- Ready to Play -->
+                    <div class="text-center py-8">
+                        <button @click="page = 'login'" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg transition">
+                            Ready? Sign In
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </template>
+
     <!-- Login Page -->
     <template x-if="page === 'login'">
         <div class="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-950 flex items-center justify-center p-6">
